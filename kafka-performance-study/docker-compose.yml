@@ -52,7 +52,8 @@ services:
     networks:
       - kafka-network
     healthcheck:
-      test: ["CMD-SHELL", "kafka-topics --bootstrap-server localhost:9092 --list"]
+      # --- CORREÇÃO APLICADA AQUI ---
+      test: ["CMD-SHELL", "kafka-topics --bootstrap-server kafka:29092 --list"]
       interval: 30s
       timeout: 10s
       retries: 3

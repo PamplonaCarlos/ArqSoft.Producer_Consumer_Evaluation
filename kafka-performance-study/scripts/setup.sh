@@ -31,6 +31,28 @@ print_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
+# --- NOVA FUNÇÃO ADICIONADA AQUI ---
+wait_for_kafka() {
+    print_status "Aguardando Kafka inicializar e se tornar saudável..."
+    local total_wait_time=120 # Tempo máximo de espera em segundos (2 minutos)
+    local interval=5 # Intervalo entre verificações
+    local elapsed_time=0
+
+    while [ $elapsed_time -lt $total_wait_time ]; do
+        if docker-compose ps kafka | grep -q "Up.*healthy"; then
+            print_success "Kafka está rodando e saudável!"
+            return 0
+        fi
+        sleep $interval
+        elapsed_time=$((elapsed_time + interval))
+        echo -n "."
+    done
+
+    echo "" # Newline after dots
+    print_error "Kafka não ficou saudável após $total_wait_time segundos. Verifique os logs: docker-compose logs kafka"
+    exit 1
+}
+
 # Check if Docker is installed and running
 check_docker() {
     print_status "Verificando Docker..."
@@ -103,23 +125,11 @@ start_kafka() {
     docker-compose down -v 2>/dev/null || true
     docker-compose up -d
 
-    print_status "Aguardando Kafka inicializar..."
-    sleep 30
+    # --- CORREÇÃO APLICADA AQUI: sleep E ifs REMOVIDOS ---
+    wait_for_kafka
 
-    # Check if Kafka is healthy
-    if docker-compose ps | grep -q "kafka.*Up.*healthy"; then
-        print_success "Kafka está rodando e saudável"
-    else
-        print_warning "Kafka pode não estar completamente inicializado. Verificando..."
-        sleep 15
-
-        if docker-compose ps | grep -q "kafka.*Up"; then
-            print_success "Kafka está rodando"
-        else
-            print_error "Falha ao iniciar Kafka. Verifique os logs: docker-compose logs"
-            exit 1
-        fi
-    fi
+    print_status "Aguardando listeners externos estabilizarem..."
+    sleep 5
 }
 
 # Create Kafka topics
