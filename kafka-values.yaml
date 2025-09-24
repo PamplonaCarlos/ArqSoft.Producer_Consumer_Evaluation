@@ -1,0 +1,8 @@
+# kafka-values.yaml
+
+# Diz ao gráfico para usar um ConfigMap que já existe
+existingConfigmap: "kafka-custom-properties"
+
+# Desabilita a autenticação, conforme nossa configuração no ConfigMap
+auth:
+  enabled: false

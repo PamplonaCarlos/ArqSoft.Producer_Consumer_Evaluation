@@ -1,0 +1,57 @@
+# custom-servicemonitors.yaml (VERSÃO COM PORTAS CORRIGIDAS)
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: kafka-servicemonitor
+  namespace: monitoring
+  labels:
+    release: monitor
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: kafka
+      app.kubernetes.io/component: metrics
+  namespaceSelector:
+    matchNames:
+    - default
+  endpoints:
+  - port: http-metrics # <-- CORRIGIDO de http-metrics-jmx
+    interval: 15s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: rabbitmq-servicemonitor
+  namespace: monitoring
+  labels:
+    release: monitor
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: rabbitmq
+      app.kubernetes.io/name: rabbitmq
+  namespaceSelector:
+    matchNames:
+    - default
+  endpoints:
+  - port: metrics
+    interval: 15s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: postgresql-servicemonitor
+  namespace: monitoring
+  labels:
+    release: monitor
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: postgres
+      app.kubernetes.io/component: metrics
+  namespaceSelector:
+    matchNames:
+    - default
+  endpoints:
+  - port: http-metrics # <-- CORRIGIDO de metrics
+    interval: 15s

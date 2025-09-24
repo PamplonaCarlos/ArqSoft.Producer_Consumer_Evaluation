@@ -1,0 +1,19 @@
+# grafana-ingress.yaml (versão corrigida)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana-ingress
+  namespace: monitoring
+spec:
+  ingressClassName: nginx # <-- ADICIONE ESTA LINHA
+  rules:
+  - host: "grafana.carlospamplona.dev"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: monitor-grafana
+            port:
+              number: 80

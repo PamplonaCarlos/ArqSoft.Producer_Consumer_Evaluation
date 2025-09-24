@@ -1,0 +1,24 @@
+# kafka-values-novo.yaml
+
+# Desabilita o KRaft para usar a arquitetura com ZooKeeper
+kraft:
+  enabled: false
+zookeeper:
+  enabled: true
+
+# Desabilita a autenticação para máxima simplicidade
+auth:
+  enabled: false
+
+# Para um cluster de 2 nós, vamos começar com 1 broker para ser mais seguro
+replicaCount: 1
+
+# Configuração de acesso externo usando os parâmetros corretos para o modo ZooKeeper
+external:
+  enabled: true
+  service:
+    # O gráfico precisa disso internamente, mas não afetará nosso Ingress
+    type: NodePort
+  advertisedListeners:
+    # O endereço público que o Kafka irá anunciar para clientes externos
+    - kafka.carlospamplona.dev:9092
